@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="18.11.0.1">
+<procedure name="main">
+<interface/>
+<body>
+<l>open_framegrabber('DirectShow', 1, 1, 0, 0, 0, 0, 'default', 8, 'rgb', -1, 'false', 'default', '[0]', 0, -1, AcqHandle)</l>
+<l>grab_image_start(AcqHandle, -1)</l>
+<l>dev_open_window(0, 0, 900, 512, 'black', WindowHandle)</l>
+<c></c>
+<l>while (true)</l>
+<l>    grab_image_async(Image, AcqHandle, -1)</l>
+<l>    decompose3(Image, red, green, blue)</l>
+<l>    trans_from_rgb(red, green, blue, hue, saturation, intensity, 'hsv')</l>
+<l>    threshold(saturation, highsaturation, 120, 255)</l>
+<l>    reduce_domain(hue, highsaturation, huehighsaturation)</l>
+<c>    </c>
+<c>    * Detect red objects</c>
+<l>    threshold(huehighsaturation, red_regions, 220, 255)</l>
+<l>    fill_up(red_regions, filled_red_regions)</l>
+<l>    union1(filled_red_regions, union_red_regions)</l>
+<l>    closing_circle(union_red_regions, closed_red_regions, 3.5)</l>
+<l>    reduce_domain(Image, closed_red_regions, imgred)</l>
+<l>    area_center(closed_red_regions, AreasR, RowsR, ColumnsR)</l>
+<c>    </c>
+<c>    * Detect green objects</c>
+<l>    threshold(huehighsaturation, green_regions, 20, 120)</l>
+<l>    fill_up(green_regions, filled_green_regions)</l>
+<l>    union1(filled_green_regions, union_green_regions)</l>
+<l>    closing_circle(union_green_regions, closed_green_regions, 3.5)</l>
+<l>    reduce_domain(Image, closed_green_regions, imggreen)</l>
+<l>    area_center(closed_green_regions, AreasG, RowsG, ColumnsG)</l>
+<c>    </c>
+<c>    * Detect blue objects</c>
+<l>    threshold(huehighsaturation, blue_regions, 120, 220)</l>
+<l>    fill_up(blue_regions, filled_blue_regions)</l>
+<l>    union1(filled_blue_regions, union_blue_regions)</l>
+<l>    closing_circle(union_blue_regions, closed_blue_regions, 3.5)</l>
+<l>    reduce_domain(Image, closed_blue_regions, imgblue)</l>
+<l>    area_center(closed_blue_regions, AreasB, RowsB, ColumnsB)</l>
+<c>    </c>
+<c>    * Display red objects</c>
+<l>    dev_display(huehighsaturation)</l>
+<l>    dev_display(imgred)</l>
+<l>    for i := 0 to |RowsR| - 1 by 1</l>
+<l>        if (i == 0)</l>
+<l>            disp_message(WindowHandle, 'red' + (i + 1) + ': X = ' + ColumnsR[i], 'window', 20, 20, 'black', 'true')</l>
+<l>            disp_message(WindowHandle, 'red' + (i + 1) + ': Y = ' + RowsR[i], 'window', 40, 20, 'black', 'true')</l>
+<l>        else</l>
+<l>            disp_message(WindowHandle, 'red' + (i + 1) + ': X = ' + ColumnsR[i], 'window', 820, 20 + 40 * (i - 1), 'black', 'true')</l>
+<l>            disp_message(WindowHandle, 'red' + (i + 1) + ': Y = ' + RowsR[i], 'window', 840, 20 + 40 * (i - 1), 'black', 'true')</l>
+<l>        endif</l>
+<l>        gen_rectangle2(RectangleR, RowsR[i], ColumnsR[i], 0, 10, 10)</l>
+<l>        dev_display(RectangleR)</l>
+<l>    endfor</l>
+<c>    </c>
+<c>    * Display green objects</c>
+<l>    dev_display(imggreen)</l>
+<l>    for i := 0 to |RowsG| - 1 by 1</l>
+<l>        if (i == 0)</l>
+<l>            disp_message(WindowHandle, 'green' + (i + 1) + ': X = ' + ColumnsG[i], 'window', 20, 100, 'black', 'true')</l>
+<l>            disp_message(WindowHandle, 'green' + (i + 1) + ': Y = ' + RowsG[i], 'window', 40, 100, 'black', 'true')</l>
+<l>        else</l>
+<l>            disp_message(WindowHandle, 'green' + (i + 1) + ': X = ' + ColumnsG[i], 'window', 820, 100 + 40 * (i - 1), 'black', 'true')</l>
+<l>            disp_message(WindowHandle, 'green' + (i + 1) + ': Y = ' + RowsG[i], 'window', 840, 100 + 40 * (i - 1), 'black', 'true')</l>
+<l>        endif</l>
+<l>        gen_rectangle2(RectangleG, RowsG[i], ColumnsG[i], 0, 10, 10)</l>
+<l>        dev_display(RectangleG)</l>
+<l>    endfor</l>
+<c>    </c>
+<c>    * Display blue objects</c>
+<l>    dev_display(imgblue)</l>
+<l>    for i := 0 to |RowsB| - 1 by 1</l>
+<l>        if (i == 0)</l>
+<l>            disp_message(WindowHandle, 'blue' + (i + 1) + ': X = ' + ColumnsB[i], 'window', 20, 180, 'black', 'true')</l>
+<l>            disp_message(WindowHandle, 'blue' + (i + 1) + ': Y = ' + RowsB[i], 'window', 40, 180, 'black', 'true')</l>
+<l>        else</l>
+<l>            disp_message(WindowHandle, 'blue' + (i + 1) + ': X = ' + ColumnsB[i], 'window', 820, 180 + 40 * (i - 1), 'black', 'true')</l>
+<l>            disp_message(WindowHandle, 'blue' + (i + 1) + ': Y = ' + RowsB[i], 'window', 840, 180 + 40 * (i - 1), 'black', 'true')</l>
+<l>        endif</l>
+<l>        gen_rectangle2(RectangleB, RowsB[i], ColumnsB[i], 0, 10, 10)</l>
+<l>        dev_display(RectangleB)</l>
+<l>    endfor</l>
+<l>    stop()</l>
+<l>endwhile</l>
+<c></c>
+<l>close_framegrabber(AcqHandle)</l>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

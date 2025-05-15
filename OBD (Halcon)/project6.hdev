@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="18.11.0.1">
+<procedure name="main">
+<interface/>
+<body>
+<l>open_framegrabber ('DirectShow', 1, 1, 0, 0, 0, 0, 'default', 8, 'rgb', -1, 'false', 'default', '[0] ', 0, -1, AcqHandle)</l>
+<l>grab_image_start (AcqHandle, -1)</l>
+<l>dev_open_window (0, 0, 900, 512, 'black', WindowHandle)</l>
+<l>while (true)</l>
+<l>    grab_image_async (Image, AcqHandle, -1)</l>
+<l>    decompose3(Image, red, green, blue)</l>
+<l>    trans_from_rgb(red, green, blue, hue, saturation, intensity, 'hsv')</l>
+<l>    threshold(saturation, highsaturation, 120, 255)</l>
+<l>    reduce_domain(hue, highsaturation, huehighsaturation)</l>
+<l>    threshold(huehighsaturation, red, 220, 255)</l>
+<l>    connection(red, conred)</l>
+<l>    select_shape_std(conred, selectconred, 'max_area', 0)</l>
+<l>    closing_circle(selectconred, red, 3.5)</l>
+<l>    reduce_domain(Image,red, imgred)</l>
+<l>    area_center (red, Area, Rows, Columns)</l>
+<l>    dev_display(huehighsaturation)</l>
+<l>    dev_display(imgred)</l>
+<l>    for i := 0 to |Rows| - 1 by 1</l>
+<l>        disp_message (WindowHandle, 'X : ' + Columns[i], 'window', 20 + 20 * i, 20, 'black', 'true')</l>
+<l>        disp_message (WindowHandle, 'Y : ' + Rows[i], 'window', 40 + 20 * i, 20, 'black', 'true')</l>
+<l>    endfor</l>
+<l>endwhile</l>
+<l>close_framegrabber (AcqHandle)</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
