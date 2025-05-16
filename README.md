@@ -1,6 +1,6 @@
 # Robotic Arm – Team Golden Dragon
 
-This repository contains the code and design files for the **Robotic Arm** project developed by **Team Golden Dragon**. As the lead programmer, I was responsible for designing and implementing the control system, coordinating servo movement, and ensuring reliable task execution.
+This repository contains the code and design files for the **Robotic Arm** project developed by **The Golden Dragon Team**. As the lead programmer, I was responsible for designing and implementing the control system, coordinating servo movement, and ensuring reliable task execution.
 
 ---
 
